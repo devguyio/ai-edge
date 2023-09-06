@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: bike-rental-inference-generator
+spec:
+  schedule: "*/1 * * * *"  # This will run the job every hour
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: test-mlflow-container
+            image: quay.io/devguyio/curl-jq
+            command:
+            - /bin/bash
+            - -c
+            - |
+              # set -xe
+              echo "Test inference REST web service"
+              echo "Data:"
+              cat /workspace/test-data/data.json
+              # Add your expected response here or remove this line if not needed
+              INDEX=$(( RANDOM % 20 ))
+
+              # Randomly selects a record from data.json
+              RANDOM_ROW=$(cat /workspace/test-data/data.json | jq -r ".dataframe_split.data | .[$INDEX]")
+              PAYLOAD="{\"dataframe_split\": {\"columns\":[ \"day\", \"mnth\", \"year\", \"season\",\"holiday\", \"weekday\", \"workingday\", \"weathersit\", \"temp\", \"hum\", \"windspeed\" ], \"data\":[$RANDOM_ROW]}}"
+              echo "Payload: $PAYLOAD"
+
+              # Call the service
+              echo ""
+              echo "Call service:"
+              curl -v -H "Content-Type:application/json" --data "$PAYLOAD" -o /tmp/output.json http://$MODEL_NAME-$MODEL_VERSION:8080/$TEST_ENDPOINT
+
+              # Check response:
+              echo "Check response:"
+              cat /tmp/output.json
+              grep -Eao '\"predictions\":\s*\[\s*[-+]?([0-9]+(\.[0-9]+)?)\s*\]' /tmp/output.json
+            env:
+            - name: MODEL_NAME
+              value: "bike-rentals-auto-ml"  # modify this
+            - name: MODEL_VERSION
+              value: "1"  # modify this if needed
+            - name: TEST_ENDPOINT
+              value: "invocations"  # modify this
+            volumeMounts:
+            - name: test-data-volume
+              mountPath: /workspace/test-data
+          volumes:
+          - name: test-data-volume
+            configMap:
+              name: bike-rental-test-data  # This assumes you have a ConfigMap named bike-rentals-test-data with the JSON data
+          restartPolicy: OnFailure
+
