@@ -3,42 +3,51 @@ kind: CronJob
 metadata:
   name: bike-rental-inference-generator
 spec:
-  schedule: "*/1 * * * *"  # This will run the job every hour
+  schedule: "*/5 * * * *"  # This will run the job every hour
   jobTemplate:
     spec:
       template:
         spec:
           containers:
           - name: test-mlflow-container
-            image: quay.io/devguyio/curl-jq
+            image: quay.io/devguyio/ab-jq
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsNonRoot: true
+              seccompProfile:
+                type: "RuntimeDefault"
+              capabilities:
+                drop:
+                - ALL
             command:
             - /bin/bash
             - -c
             - |
-              # set -xe
               echo "Test inference REST web service"
               echo "Data:"
               cat /workspace/test-data/data.json
               # Add your expected response here or remove this line if not needed
               INDEX=$(( RANDOM % 20 ))
+              
+              R_COUNT=$(( RANDOM % 901 + 100 ))
+              R_RATE=$(( RANDOM % ($R_COUNT - 99) + 100 ))
 
               # Randomly selects a record from data.json
               RANDOM_ROW=$(cat /workspace/test-data/data.json | jq -r ".dataframe_split.data | .[$INDEX]")
               PAYLOAD="{\"dataframe_split\": {\"columns\":[ \"day\", \"mnth\", \"year\", \"season\",\"holiday\", \"weekday\", \"workingday\", \"weathersit\", \"temp\", \"hum\", \"windspeed\" ], \"data\":[$RANDOM_ROW]}}"
               echo "Payload: $PAYLOAD"
+              echo "$PAYLOAD" > /tmp/payload.json
+
 
               # Call the service
               echo ""
               echo "Call service:"
-              curl -v -H "Content-Type:application/json" --data "$PAYLOAD" -o /tmp/output.json http://$MODEL_NAME-$MODEL_VERSION:8080/$TEST_ENDPOINT
-
-              # Check response:
-              echo "Check response:"
-              cat /tmp/output.json
-              grep -Eao '\"predictions\":\s*\[\s*[-+]?([0-9]+(\.[0-9]+)?)\s*\]' /tmp/output.json
+              echo "Number of requests: ${R_COUNT} concurrent requests: ${R_RATE}"
+              # Use ab for load testing with 100 concurrent requests
+              ab -p /tmp/payload.json -T "application/json" -c $R_RATE -n $R_COUNT http://$(MODEL_NAME)-$(MODEL_VERSION):8080/$(TEST_ENDPOINT)
             env:
             - name: MODEL_NAME
-              value: "bike-rentals-auto-ml"  # modify this
+              value: "bike-rental-app-model"  # modify this
             - name: MODEL_VERSION
               value: "1"  # modify this if needed
             - name: TEST_ENDPOINT
