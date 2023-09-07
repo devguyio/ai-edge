@@ -12,6 +12,7 @@ labels:
 resources:
 - ../../base
 - bike-servicemonitor.yaml
+- bike-rental-inference-generator-cronjob.yaml
 
 namespace: bike-rental-app
 namePrefix: bike-rental-app-

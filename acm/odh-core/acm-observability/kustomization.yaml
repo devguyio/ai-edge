@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - multiclusterobservability.yaml
+  - grafana-dashboard-edge-inference-health.yaml
 
 secretGenerator:
 - name: thanos-object-storage
