@@ -29,7 +29,9 @@ spec:
               # Add your expected response here or remove this line if not needed
               INDEX=$(( RANDOM % 20 ))
               
+              # Number of requests between 100 and 1000
               R_COUNT=$(( RANDOM % 901 + 100 ))
+              # Number of concurrent requests between 100 and R_COUNT
               R_RATE=$(( RANDOM % ($R_COUNT - 99) + 100 ))
 
               # Randomly selects a record from data.json
@@ -58,6 +60,6 @@ spec:
           volumes:
           - name: test-data-volume
             configMap:
-              name: bike-rental-test-data  # This assumes you have a ConfigMap named bike-rentals-test-data with the JSON data
+              name: bike-rental-test-data  # This assumes you have a ConfigMap named bike-rental-test-data with the JSON data
           restartPolicy: OnFailure
 
