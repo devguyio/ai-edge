@@ -3,14 +3,14 @@ kind: CronJob
 metadata:
   name: bike-rental-inference-generator
 spec:
-  schedule: "*/5 * * * *"  # This will run the job every hour
+  schedule: "*/5 * * * *"
   jobTemplate:
     spec:
       template:
         spec:
           containers:
           - name: test-mlflow-container
-            image: quay.io/devguyio/ab-jq
+            image: quay.io/rhoai-edge/ab-jq
             securityContext:
               allowPrivilegeEscalation: false
               runAsNonRoot: true
@@ -42,11 +42,13 @@ spec:
 
 
               # Call the service
+              SRVC_URL="http://$(MODEL_NAME)-$(MODEL_VERSION):8080/$(TEST_ENDPOINT)"
               echo ""
-              echo "Call service:"
+              echo "Call inference service $SRVC_URL :"
               echo "Number of requests: ${R_COUNT} concurrent requests: ${R_RATE}"
+              echo ""
               # Use ab for load testing with 100 concurrent requests
-              ab -p /tmp/payload.json -T "application/json" -c $R_RATE -n $R_COUNT http://$(MODEL_NAME)-$(MODEL_VERSION):8080/$(TEST_ENDPOINT)
+              ab -p /tmp/payload.json -T "application/json" -c $R_RATE -n $R_COUNT $SRVC_URL
             env:
             - name: MODEL_NAME
               value: "bike-rental-app-model"  # modify this
@@ -60,6 +62,6 @@ spec:
           volumes:
           - name: test-data-volume
             configMap:
-              name: bike-rental-test-data  # This assumes you have a ConfigMap named bike-rental-test-data with the JSON data
+              name: to-be-replaced-by-kustomize
           restartPolicy: OnFailure
 
