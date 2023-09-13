@@ -3,4 +3,4 @@ kind: Kustomization
 
 resources:
 - overlays/bike-rental-app
-- overlays/tensorflow-housing-app
+#- overlays/tensorflow-housing-app

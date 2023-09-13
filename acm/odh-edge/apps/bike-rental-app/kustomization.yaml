@@ -14,7 +14,7 @@ resources:
 - bike-servicemonitor.yaml
 - bike-rental-inference-generator-cronjob.yaml
 
-namespace: bike-rental-app
+namespace: abdalla-test-pr-61
 namePrefix: bike-rental-app-
 
 commonLabels:

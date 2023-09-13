@@ -4,8 +4,8 @@ kind: Kustomization
 resources:
 - ../../base
 
-namespace: bike-rental-app
-namePrefix: bike-rental-app-
+namespace: abdalla-test-pr-61
+namePrefix: abdalla-ai-edge-
 
 commonAnnotations:
   apps.open-cluster-management.io/git-path: acm/odh-edge/apps/bike-rental-app
@@ -27,12 +27,12 @@ patches:
 - patch: |-
     - op: replace
       path: /spec/channel
-      value: bike-rental-app/bike-rental-app-channel
+      value: abdalla-ai-edge-channel
   target:
     kind: Subscription
 - patch: |-
     - op: replace
       path: /spec/pathname
-      value: http://gitea-ai-edge-rhoai-edge-acm.apps.rhoai-edge-acm-poc.rhaiseng.com/edge-user-1/ai-edge-gitops.git
+      value: https://github.com/devguyio/ai-edge
   target:
     kind: Channel
