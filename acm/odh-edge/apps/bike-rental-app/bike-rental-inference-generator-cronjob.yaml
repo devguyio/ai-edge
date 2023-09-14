@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
           - name: test-mlflow-container
-            image: quay.io/rhoai-edge/ab-jq:sha256:492b950bef86a0c33163ccc53e96a9ec8847773ad3fecbf1e5c92be932866e04
+            image: quay.io/rhoai-edge/ab-jq@sha256:492b950bef86a0c33163ccc53e96a9ec8847773ad3fecbf1e5c92be932866e04
             securityContext:
               allowPrivilegeEscalation: false
               runAsNonRoot: true
