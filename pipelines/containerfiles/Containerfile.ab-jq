@@ -2,7 +2,7 @@ FROM registry.access.redhat.com/ubi9/ubi-minimal
 
 # `jq` is required to parse and format JSON
 # `httpd-tools` provides ab benchmarking tool
-RUN microdnf --nodocs --setopt=keepcache=0 install -y httpd-tools && \
+RUN microdnf --nodocs --setopt=keepcache=0 install -y jq httpd-tools && \
     microdnf clean all
 
 LABEL org.opencontainers.image.licenses="MIT"
