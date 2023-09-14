@@ -25,7 +25,7 @@ spec:
             - |
               echo "Test inference REST web service"
               echo "Data:"
-              cat /workspace/test-data/data.json
+              cat /workspace/test-data/test-data.json
               # Add your expected response here or remove this line if not needed
               INDEX=$(( RANDOM % 20 ))
               
