@@ -48,7 +48,7 @@ spec:
               echo "Number of requests: ${R_COUNT} concurrent requests: ${R_RATE}"
               echo ""
               # Use ab for load testing with 100 concurrent requests
-              ab -p /tmp/payload.json -T "application/json" -c $R_RATE -n $R_COUNT $SRVC_URL
+              ab -s 300 -p /tmp/payload.json -T "application/json" -c $R_RATE -n $R_COUNT $SRVC_URL
             env:
             - name: MODEL_NAME
               value: "bike-rental-app-model"  # modify this
