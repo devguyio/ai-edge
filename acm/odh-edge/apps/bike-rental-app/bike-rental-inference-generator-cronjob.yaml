@@ -30,9 +30,9 @@ spec:
               INDEX=$(( RANDOM % 20 ))
               
               # Number of requests between 100 and 1000
-              R_COUNT=$(( RANDOM % 901 + 100 ))
+              R_COUNT=$(( RANDOM % 91 + 10 ))
               # Number of concurrent requests between 100 and R_COUNT
-              R_RATE=$(( RANDOM % ($R_COUNT - 99) + 100 ))
+              R_RATE=$(( RANDOM % ($R_COUNT - 9) + 10 ))
 
               # Randomly selects a record from data.json
               RANDOM_ROW=$(cat /workspace/test-data/test-data.json | jq -r ".dataframe_split.data | .[$INDEX]")
