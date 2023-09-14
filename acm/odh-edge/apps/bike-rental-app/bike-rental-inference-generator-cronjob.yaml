@@ -35,7 +35,7 @@ spec:
               R_RATE=$(( RANDOM % ($R_COUNT - 99) + 100 ))
 
               # Randomly selects a record from data.json
-              RANDOM_ROW=$(cat /workspace/test-data/data.json | jq -r ".dataframe_split.data | .[$INDEX]")
+              RANDOM_ROW=$(cat /workspace/test-data/test-data.json | jq -r ".dataframe_split.data | .[$INDEX]")
               PAYLOAD="{\"dataframe_split\": {\"columns\":[ \"day\", \"mnth\", \"year\", \"season\",\"holiday\", \"weekday\", \"workingday\", \"weathersit\", \"temp\", \"hum\", \"windspeed\" ], \"data\":[$RANDOM_ROW]}}"
               echo "Payload: $PAYLOAD"
               echo "$PAYLOAD" > /tmp/payload.json
